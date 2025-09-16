@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AvaloniaProject">
+    <option name="projectPerEditor">
+      <map>
+        <entry key="aimware/AdditionallyWindow.axaml" value="aimware/aimware.csproj" />
+        <entry key="aimware/MainWindow.axaml" value="aimware/aimware.csproj" />
+        <entry key="aimware/MenageWindow.axaml" value="aimware/aimware.csproj" />
+        <entry key="aimware/WarningWindow.axaml" value="aimware/aimware.csproj" />
+      </map>
+    </option>
+  </component>
+</project>

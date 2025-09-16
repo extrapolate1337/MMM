@@ -1,0 +1,156 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="450"
+        x:Class="aimware.WarningWindow"
+        SystemDecorations="None"
+        Title="MMM" Background="#232323" Width="300" Height="150" MaxHeight="150" MaxWidth="300"
+        MinHeight="150" MinWidth="300">
+    <Grid>
+        <Border BorderBrush="#373737" BorderThickness="1">
+            <Rectangle Width="292" Height="142"
+                       HorizontalAlignment="Center"
+                       Margin="4 4 4 4"
+                       Fill="#141414"
+                       Stroke="#373737"
+                       StrokeThickness="1" />
+        </Border>
+        <Rectangle Name="DragImage" Width="292" Height="142"
+                   HorizontalAlignment="Center"
+                   Margin="4 4 4 4"
+                   Stroke="#373737"
+                   StrokeThickness="1">
+            <Rectangle.Fill>
+                <ImageBrush Source="warn.png"
+                            TileMode="Tile"
+                            Stretch="UniformToFill" />
+            </Rectangle.Fill>
+        </Rectangle>
+        <Grid>
+            <Rectangle Width="288"
+                       Height="1"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Top"
+                       Margin="0 7 0 0">
+                <Rectangle.Fill>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="3,30">
+                        <GradientStop Color="#6b9cc6" Offset="0.1" />
+                        <GradientStop Color="#9779bb" Offset="0.25" />
+                        <GradientStop Color="#b872ab" Offset="0.5" />
+                        <GradientStop Color="#cb9d8d" Offset="0.75" />
+                        <GradientStop Color="#ddc37b" Offset="1.0" />
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+            <Rectangle Width="288"
+                       Height="1"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Top"
+                       Margin="0 8 0 0">
+                <Rectangle.Fill>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="3,30">
+                        <GradientStop Color="#2a313f" Offset="0.1" />
+                        <GradientStop Color="#38253c" Offset="0.25" />
+                        <GradientStop Color="#423031" Offset="0.5" />
+                        <GradientStop Color="#494025" Offset="0.75" />
+                        <GradientStop Color="#494025" Offset="1.0" />
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+
+            <Rectangle Fill="#141414"
+                       Width="260" Height="95"
+                       Stroke="#303030" StrokeThickness="1"
+                       HorizontalAlignment="Center" VerticalAlignment="Top"
+                       Margin="1 30 1 1" />
+
+            <Rectangle Fill="#141414"
+                       Width="55" Height="1"
+                       HorizontalAlignment="Left" VerticalAlignment="Bottom"
+                       Margin="51 1 1 119" />
+            <Label Foreground="#c0c1c1"
+                   Width="105"
+                   Height="21"
+                   FontSize="11"
+                   HorizontalAlignment="Left" VerticalAlignment="Bottom"
+                   HorizontalContentAlignment="Center"
+                   VerticalContentAlignment="Bottom"
+                   FontFamily="Verdana"
+                   Margin="25 1 1 110">
+                Warning
+            </Label>
+
+            <Button Name="No" Click="No_OnClick"
+                    Background="#1e1e1e"
+                    Width="65" Height="30"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Bottom"
+                    Margin="135 1 1 35"
+                    BorderBrush="Black"
+                    BorderThickness="1"
+                    Padding="0">
+
+                <Border BorderBrush="#303030"
+                        BorderThickness="1"
+                        CornerRadius="0"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,25">
+                            <GradientStop Color="#232323" Offset="0" />
+                            <GradientStop Color="#191919" Offset="1" />
+                        </LinearGradientBrush>
+                    </Border.Background>
+
+                    <TextBlock Text="No"
+                               Foreground="#c0c1c1"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               FontSize="12"
+                               FontFamily="Verdana" />
+                </Border>
+            </Button>
+            <Button Name="Yes" Click="Yes_OnClick"
+                    Background="#1e1e1e"
+                    Width="65" Height="30"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Bottom"
+                    Margin="205 1 1 35"
+                    BorderBrush="Black"
+                    BorderThickness="1"
+                    Padding="0">
+
+                <Border BorderBrush="#303030"
+                        BorderThickness="1"
+                        CornerRadius="0"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,25">
+                            <GradientStop Color="#232323" Offset="0" />
+                            <GradientStop Color="#191919" Offset="1" />
+                        </LinearGradientBrush>
+                    </Border.Background>
+
+                    <TextBlock Text="Yes"
+                               Foreground="#c0c1c1"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               FontSize="12"
+                               FontFamily="Verdana" />
+                </Border>
+            </Button>
+
+            <Label Name="Label"
+                   Foreground="#c0c1c1"
+                   Width="250"
+                   Height="30"
+                   FontSize="14"
+                   HorizontalAlignment="Left" VerticalAlignment="Top"
+                   FontFamily="Verdana"
+                   Margin="35 40 1 1">Are you sure?
+            </Label>
+        </Grid>
+    </Grid>
+</Window>
