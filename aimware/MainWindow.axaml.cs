@@ -394,8 +394,18 @@ public partial class MainWindow : Window
             }
 
         var directory = Directory.GetCurrentDirectory();
-        if (!directory.Contains("modpacks")) Directory.CreateDirectory("modpacks");
-        Directory.SetCurrentDirectory("./modpacks");
+        if (!directory.Contains("modpacks"))
+            //Directory.CreateDirectory("modpacks");
+            try
+            {
+                Directory.SetCurrentDirectory("./modpacks");
+            }
+            catch
+            {
+                Directory.CreateDirectory("modpacks");
+                Directory.SetCurrentDirectory("./modpacks");
+            }
+
         var Paks = Directory.GetDirectories("./");
         var Modpacks = Paks.Select(p => p.Replace("./", "")).ToList();
         if (Modpacks.Contains("New ModPack"))
