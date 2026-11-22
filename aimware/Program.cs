@@ -1,4 +1,5 @@
 ﻿using Avalonia;
+using Avalonia.Controls;
 using System;
 
 namespace aimware;
@@ -14,8 +15,20 @@ class Program
 
     // Avalonia configuration, don't remove; also used by visual designer.
     public static AppBuilder BuildAvaloniaApp()
-        => AppBuilder.Configure<App>()
+    {
+        var builder = AppBuilder.Configure<App>()
             .UsePlatformDetect()
             .WithInterFont()
             .LogToTrace();
+
+        if (Design.IsDesignMode)
+        {
+            builder = builder.With(new X11PlatformOptions
+            {
+                RenderingMode = new[] { X11RenderingMode.Software }
+            });
+        }
+
+        return builder;
+    }
 }

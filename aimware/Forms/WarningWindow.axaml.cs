@@ -12,20 +12,19 @@ public partial class WarningWindow : Window
         InitializeComponent();
         NewMessage();
 
-        if (DragImage != null) DragImage.PointerPressed += DragImage_PointerPressed;
+        if (DragImage != null)
+            DragImage.PointerPressed += DragImage_PointerPressed;
     }
     public void NewMessage()
-    {   
-        Console.WriteLine("Warning: " + Label.Content);
+    {
         Label.Content = "Are you sure?";
-        Console.WriteLine("Text: " + Label.Content);
     }
-    
+
     private void DragImage_PointerPressed(object? sender, PointerPressedEventArgs e)
     {
         if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed) BeginMoveDrag(e);
     }
-    
+
     private void Yes_OnClick(object? sender, RoutedEventArgs e)
     {
         Close(true);

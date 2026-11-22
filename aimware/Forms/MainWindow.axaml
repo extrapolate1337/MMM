@@ -1,0 +1,644 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="aimware.MainWindow"
+        SystemDecorations="None"
+        Title="MMM" Background="#232323" Width="800" Height="450" 
+        Icon="avares://aimware/Resources/icon/mmm-icon.png"
+        MinHeight="450" MinWidth="800">
+    <Window.Styles>
+        <Style Selector="ListBoxItem">
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        </Style>
+        <Style Selector="ListBoxItem TextBlock">
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+        </Style>
+    </Window.Styles>
+    <Grid>
+        <Border BorderBrush="#373737" BorderThickness="1">
+            <Rectangle HorizontalAlignment="Stretch"
+                       VerticalAlignment="Stretch"
+                       Margin="3"
+                       Fill="#141414"
+                       Stroke="#373737"
+                       StrokeThickness="1" />
+        </Border>
+
+        <Rectangle Name="DragImage" 
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Margin="4"
+                    Stroke="#373737"
+                    StrokeThickness="1">
+                    <Rectangle.Fill>
+                        <ImageBrush Source="avares://aimware/Resources/images/pattern.png"
+                                    TileMode="Tile"
+                                    Stretch="None"
+                                    DestinationRect="0,0,100,100" />
+                    </Rectangle.Fill>
+        </Rectangle>
+        <Grid>
+            <Rectangle Height="1"
+                       HorizontalAlignment="Stretch"
+                       VerticalAlignment="Top"
+                       Margin="6 7 6 0">
+                        <Rectangle.Fill>
+                            <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,0%">
+                                <GradientStop Color="#6b9cc6" Offset="0.1" />
+                                <GradientStop Color="#9779bb" Offset="0.25" />
+                                <GradientStop Color="#b872ab" Offset="0.5" />
+                                <GradientStop Color="#cb9d8d" Offset="0.75" />
+                                <GradientStop Color="#ddc37b" Offset="1.0" />
+                            </LinearGradientBrush>
+                        </Rectangle.Fill>
+            </Rectangle>
+            <Rectangle Height="1"
+                       HorizontalAlignment="Stretch"
+                       VerticalAlignment="Top"
+                       Margin="6 8 6 0">
+                        <Rectangle.Fill>
+                            <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%, 0%">
+                                <GradientStop Color="#2a313f" Offset="0.1" />
+                                <GradientStop Color="#38253c" Offset="0.25" />
+                                <GradientStop Color="#423031" Offset="0.5" />
+                                <GradientStop Color="#494025" Offset="0.75" />
+                                <GradientStop Color="#494025" Offset="1.0" />
+                            </LinearGradientBrush>
+                        </Rectangle.Fill>
+            </Rectangle>
+
+            <Grid Margin="20 30 20 30" ColumnDefinitions="*,20,180">
+
+                <Grid Grid.Column="0">
+                    <Border Background="#171717"
+                            BorderBrush="#303030"
+                            BorderThickness="1" />
+
+
+                    <Grid Width="105"
+                          Height="21"
+                          HorizontalAlignment="Left"
+                          VerticalAlignment="Top"
+                          Margin="16 -10 0 0">
+                        <Rectangle Width="100"
+                                   Height="1"
+                                   Fill="#141414"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Top"
+                                   Margin="0 10 0 0" />
+                        <TextBlock Text="Addons Manager"
+                                   Foreground="#DCDCDC"
+                                   FontSize="11"
+                                   Margin="0 -20 0 0"
+                                   FontFamily="Verdana"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Bottom"
+                                   FontWeight="Bold" />
+                    </Grid>
+
+                    <Grid Margin="0 16 0 15" RowDefinitions="*,13,30">
+
+                        <Grid Grid.Row="0" Margin="15 0" ColumnDefinitions="*,4,*">
+                            <ListBox Name="ListBoxMenager" IsVisible="False"
+                                     Grid.Column="0"
+                                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                     SelectionChanged="ListBoxMenager_OnSelectionChanged"
+                                     Background="#1e1e1e" Foreground="#c0c1c1"
+                                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                     SelectionMode="Single"
+                                     BorderBrush="#303030"
+                                     BorderThickness="1">
+                                    <ListBox.Styles>
+                                        <Style Selector="ScrollBar">
+                                            <Setter Property="Width" Value="1" />
+                                            <Setter Property="Background" Value="#1e1e1e" />
+                                        </Style>
+                                        <Style Selector="ScrollBar Thumb">
+                                            <Setter Property="Background" Value="#7bc330" />
+                                            <Setter Property="CornerRadius" Value="100" />
+                                        </Style>
+                                        <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+                                            <Setter Property="Background" Value="#191919" />
+                                            <Setter Property="Foreground" Value="#7bc330" />
+                                        </Style>
+                                    </ListBox.Styles>
+                            </ListBox>
+
+                            <ListBox Name="ListBoxContent" IsVisible="True"
+                                    Grid.Column="0" Grid.ColumnSpan="3"
+                                    SelectionChanged="ListBoxContent_OnSelectionChanged"
+                                    ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                    Background="#1e1e1e" Foreground="#c0c1c1"
+                                    HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                    SelectionMode="Single"
+                                    BorderBrush="#303030"
+                                    BorderThickness="1">
+                                    <ListBox.Styles>
+                                        <Style Selector="ListBox /template/ ScrollViewer">
+                                            <Setter Property="AllowAutoHide" Value="True" />
+                                        </Style>
+
+                                        <Style Selector="ScrollBar:vertical">
+                                            <Setter Property="Width" Value="2" />
+                                            <Setter Property="MinWidth" Value="2" />
+                                            <Setter Property="Margin" Value="0,2,2,2" />
+                                            <Setter Property="Background" Value="Transparent" />
+                                            <Setter Property="Transitions">
+                                                <Transitions>
+                                                    <DoubleTransition Property="Opacity" Duration="0:0:0.2" />
+                                                </Transitions>
+                                            </Setter>
+                                            <Setter Property="Template">
+                                                <ControlTemplate>
+                                                    <Track Minimum="{TemplateBinding Minimum}"
+                                                        Maximum="{TemplateBinding Maximum}"
+                                                        Value="{TemplateBinding Value, Mode=TwoWay}"
+                                                        ViewportSize="{TemplateBinding ViewportSize}"
+                                                        Orientation="Vertical"
+                                                        IsDirectionReversed="True">
+                                                        <Track.Thumb>
+                                                            <Thumb>
+                                                                <Thumb.Template>
+                                                                    <ControlTemplate>
+                                                                        <Border Background="#7bc330"
+                                                                                CornerRadius="100" />
+                                                                    </ControlTemplate>
+                                                                </Thumb.Template>
+                                                            </Thumb>
+                                                        </Track.Thumb>
+                                                    </Track>
+                                                </ControlTemplate>
+                                            </Setter>
+                                        </Style>
+
+                                        <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+                                            <Setter Property="Background" Value="#191919" />
+                                            <Setter Property="Foreground" Value="#7bc330" />
+                                        </Style>
+                                    </ListBox.Styles>
+                            </ListBox>
+                        </Grid>
+
+                        <Grid Grid.Row="2" Margin="10 0 11 0"
+                              ColumnDefinitions="60,5,60,5,155,*,80,5,80,4,80">
+                            <TextBox Name="TextBox" TextChanged="TextBox_OnTextChanged"
+                                     Grid.Column="4"
+                                     IsVisible="False"
+                                     Watermark="ModPack Name"
+                                     Height="10"
+                                     VerticalAlignment="Bottom"
+                                     Background="#191919" Foreground="#c0c1c1"
+                                     BorderBrush="#303030"
+                                     Margin="0 2 0 0"
+                                     BorderThickness="1"
+                                     CornerRadius="0"
+                                     FontFamily="Verdana" FontSize="12">
+                                    <TextBox.Styles>
+                                        <Style Selector="TextBox:focus /template/ Border">
+                                            <Setter Property="BorderBrush" Value="#7bc330" />
+                                            <Setter Property="BorderThickness" Value="1" />
+                                            <Setter Property="Background" Value="#191919" />
+                                        </Style>
+                                    </TextBox.Styles>
+                            </TextBox>
+
+                            <Button Name="AddAddon" Click="AddAddon_OnClick"
+                                    Grid.Column="0"
+                                    Background="#1e1e1e"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Stretch"
+                                    BorderBrush="Black"
+                                    BorderThickness="1"
+                                    Padding="0">
+                                    <Border BorderBrush="#303030"
+                                            BorderThickness="1"
+                                            CornerRadius="0"
+                                            HorizontalAlignment="Stretch"
+                                            VerticalAlignment="Stretch">
+                                        <Border.Background>
+                                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,25">
+                                                <GradientStop Color="#232323" Offset="0" />
+                                                <GradientStop Color="#191919" Offset="1" />
+                                            </LinearGradientBrush>
+                                        </Border.Background>
+                                        <TextBlock Text="+"
+                                                Foreground="#c0c1c1"
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                FontSize="12"
+                                                FontFamily="Verdana" />
+                                    </Border>
+                            </Button>
+
+                            <Button Name="SubAddon" Click="SubAddon_OnClick"
+                                    Grid.Column="2"
+                                    Background="#1e1e1e"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Stretch"
+                                    BorderBrush="Black"
+                                    BorderThickness="1"
+                                    Padding="0">
+                                    <Border BorderBrush="#303030"
+                                            BorderThickness="1"
+                                            CornerRadius="0"
+                                            HorizontalAlignment="Stretch"
+                                            VerticalAlignment="Stretch">
+                                        <Border.Background>
+                                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,25">
+                                                <GradientStop Color="#232323" Offset="0" />
+                                                <GradientStop Color="#191919" Offset="1" />
+                                            </LinearGradientBrush>
+                                        </Border.Background>
+                                        <TextBlock Text="-"
+                                                Foreground="#c0c1c1"
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                FontSize="12"
+                                                FontFamily="Verdana" />
+                                    </Border>
+                            </Button>
+
+                            <Button Name="ActiveButton" Click="ActiveButton_OnClick"
+                                    Grid.Column="6"
+                                    IsVisible="False"
+                                    Background="#1e1e1e"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Stretch"
+                                    BorderBrush="Black"
+                                    BorderThickness="1"
+                                    Padding="0">
+                                    <Border BorderBrush="#303030"
+                                            BorderThickness="1"
+                                            CornerRadius="0"
+                                            HorizontalAlignment="Stretch"
+                                            VerticalAlignment="Stretch">
+                                        <Border.Background>
+                                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,25">
+                                                <GradientStop Color="#232323" Offset="0" />
+                                                <GradientStop Color="#191919" Offset="1" />
+                                            </LinearGradientBrush>
+                                        </Border.Background>
+                                        <TextBlock Text="Disable"
+                                                Foreground="#c0c1c1"
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                FontSize="12"
+                                                FontFamily="Verdana" />
+                                    </Border>
+                            </Button>
+
+                            <Button Name="Move" Click="Move_OnClick"
+                                    Grid.Column="8"
+                                    IsVisible="False"
+                                    Background="#1e1e1e"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Stretch"
+                                    BorderBrush="Black"
+                                    BorderThickness="1"
+                                    Padding="0">
+                                    <Border BorderBrush="#303030"
+                                            BorderThickness="1"
+                                            CornerRadius="0"
+                                            HorizontalAlignment="Stretch"
+                                            VerticalAlignment="Stretch">
+                                        <Border.Background>
+                                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,25">
+                                                <GradientStop Color="#232323" Offset="0" />
+                                                <GradientStop Color="#191919" Offset="1" />
+                                            </LinearGradientBrush>
+                                        </Border.Background>
+                                        <TextBlock Name="MoveText"
+                                                Text="Move"
+                                                Foreground="#c0c1c1"
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                FontSize="12"
+                                                FontFamily="Verdana" />
+                                    </Border>
+                            </Button>
+
+                            <Button Name="Copy" Click="CopyMode_OnClick"
+                                    Grid.Column="10"
+                                    IsVisible="False"
+                                    Background="#1e1e1e"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Stretch"
+                                    BorderBrush="Black"
+                                    BorderThickness="1"
+                                    Padding="0">
+                                    <Border BorderBrush="#303030"
+                                            BorderThickness="1"
+                                            CornerRadius="0"
+                                            HorizontalAlignment="Stretch"
+                                            VerticalAlignment="Stretch">
+                                        <Border.Background>
+                                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,25">
+                                                <GradientStop Color="#232323" Offset="0" />
+                                                <GradientStop Color="#191919" Offset="1" />
+                                            </LinearGradientBrush>
+                                        </Border.Background>
+                                        <TextBlock Name="CopyText"
+                                                Text="Copy"
+                                                Foreground="#c0c1c1"
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                FontSize="12"
+                                                FontFamily="Verdana" />
+                                    </Border>
+                            </Button>
+                        </Grid>
+                    </Grid>
+                </Grid>
+
+                <Grid Grid.Column="2" RowDefinitions="*,20,100">
+
+                    <!-- ModPacks -->    
+                    <Grid Grid.Row="0">
+                        <Border Background="#171717"
+                                BorderBrush="#303030"
+                                BorderThickness="1" />
+
+                        <Grid Width="70"
+                              Height="21"
+                              HorizontalAlignment="Left"
+                              VerticalAlignment="Top"
+                              Margin="16 -10 0 0">
+                            <Rectangle Width="65"
+                                       Height="1"
+                                       Fill="#141414"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Top"
+                                       Margin="0 10 0 0" />
+                            <TextBlock Text="ModPacks"
+                                       Foreground="#DCDCDC"
+                                       FontSize="11"
+                                       Margin="0 -20 0 0"
+                                       FontWeight="Bold"
+                                       FontFamily="Verdana"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Bottom" />
+                        </Grid>
+
+                        <Grid Margin="15 15 15 8" RowDefinitions="*,8,30">
+                            <ListBox Name="ListBox" IsVisible="False"
+                                Grid.Row="0"
+                                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                SelectionChanged="ListBox_OnSelectionChanged"
+                                Background="#1e1e1e" Foreground="#c0c1c1"
+                                HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                SelectionMode="Single"
+                                BorderBrush="#303030"
+                                BorderThickness="1">
+                                <ListBox.Styles>
+                                    <Style Selector="ListBox /template/ ScrollViewer">
+                                        <Setter Property="AllowAutoHide" Value="True" />
+                                    </Style>
+
+                                    <Style Selector="ScrollBar:vertical">
+                                        <Setter Property="Width" Value="2" />
+                                        <Setter Property="MinWidth" Value="2" />
+                                        <Setter Property="Margin" Value="0,2,2,2" />
+                                        <Setter Property="Background" Value="Transparent" />
+                                        <Setter Property="Transitions">
+                                            <Transitions>
+                                                <DoubleTransition Property="Opacity" Duration="0:0:0.2" />
+                                            </Transitions>
+                                        </Setter>
+                                        <Setter Property="Template">
+                                            <ControlTemplate>
+                                                <Track Minimum="{TemplateBinding Minimum}"
+                                                    Maximum="{TemplateBinding Maximum}"
+                                                    Value="{TemplateBinding Value, Mode=TwoWay}"
+                                                    ViewportSize="{TemplateBinding ViewportSize}"
+                                                    Orientation="Vertical"
+                                                    IsDirectionReversed="True">
+                                                    <Track.Thumb>
+                                                        <Thumb>
+                                                            <Thumb.Template>
+                                                                <ControlTemplate>
+                                                                    <Border Background="#7bc330"
+                                                                            CornerRadius="100" />
+                                                                </ControlTemplate>
+                                                            </Thumb.Template>
+                                                        </Thumb>
+                                                    </Track.Thumb>
+                                                </Track>
+                                            </ControlTemplate>
+                                        </Setter>
+                                    </Style>
+
+                                    <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+                                        <Setter Property="Background" Value="#191919" />
+                                        <Setter Property="Foreground" Value="#7bc330" />
+                                    </Style>
+                                </ListBox.Styles>
+                            </ListBox>
+
+                            <StackPanel Grid.Row="2"
+                                        Orientation="Horizontal"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Stretch"
+                                        Spacing="6">
+                                <Button Name="AddCollection" Click="AddCollection_OnClick"
+                                        Width="120" Height="30"
+                                        Background="#1e1e1e"
+                                        BorderBrush="Black"
+                                        BorderThickness="1"
+                                        Padding="0">
+                                        <Border BorderBrush="#303030"
+                                                BorderThickness="1"
+                                                CornerRadius="0"
+                                                HorizontalAlignment="Stretch"
+                                                VerticalAlignment="Stretch">
+                                            <Border.Background>
+                                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,25">
+                                                    <GradientStop Color="#232323" Offset="0" />
+                                                    <GradientStop Color="#191919" Offset="1" />
+                                                </LinearGradientBrush>
+                                            </Border.Background>
+                                            <TextBlock Text="+"
+                                                    Foreground="#c0c1c1"
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    FontSize="12"
+                                                    FontFamily="Verdana" />
+                                        </Border>
+                                </Button>
+
+                                <Button Name="SubCollection" Click="SubCollection_OnClick"
+                                        IsVisible="False"
+                                        Width="60" Height="30"
+                                        Background="#1e1e1e"
+                                        BorderBrush="Black"
+                                        BorderThickness="1"
+                                        Padding="0">
+                                        <Border BorderBrush="#303030"
+                                                BorderThickness="1"
+                                                CornerRadius="0"
+                                                HorizontalAlignment="Stretch"
+                                                VerticalAlignment="Stretch">
+                                            <Border.Background>
+                                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,25">
+                                                    <GradientStop Color="#232323" Offset="0" />
+                                                    <GradientStop Color="#191919" Offset="1" />
+                                                </LinearGradientBrush>
+                                            </Border.Background>
+                                            <TextBlock Text="-"
+                                                    Foreground="#c0c1c1"
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    FontSize="12"
+                                                    FontFamily="Verdana" />
+                                        </Border>
+                                </Button>
+                            </StackPanel>
+                        </Grid>
+                    </Grid>
+
+                    <!-- Extra -->
+                    <Grid Grid.Row="2">
+                        <Border Background="#171717"
+                                BorderBrush="#303030"
+                                BorderThickness="1" />
+
+                        <Grid Width="35"
+                              Height="21"
+                              HorizontalAlignment="Left"
+                              VerticalAlignment="Top"
+                              Margin="16 -10 0 0">
+                            <Rectangle Width="37"
+                                       Height="1"
+                                       Fill="#141414"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Top"
+                                       Margin="0 10 0 0" />
+                            <TextBlock Text="Extra"
+                                       Foreground="#DCDCDC"
+                                       FontSize="11"
+                                       FontFamily="Verdana"
+                                       FontWeight="Bold"
+                                       Margin="0 -20 0 0"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Bottom" />
+                        </Grid>
+
+                        <Grid Margin="22 20 23 15" ColumnDefinitions="30,5,100" RowDefinitions="30,5,30">
+                            <Button Name="Floder" Click="Floder_OnClick"
+                                    Grid.Row="0" Grid.Column="0"
+                                    Background="#1e1e1e"
+                                    HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                    BorderBrush="Black"
+                                    BorderThickness="1"
+                                    Padding="0">
+                                <Border BorderBrush="#303030"
+                                        BorderThickness="1"
+                                        CornerRadius="0"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch">
+                                    <Border.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,25">
+                                            <GradientStop Color="#232323" Offset="0" />
+                                            <GradientStop Color="#191919" Offset="1" />
+                                        </LinearGradientBrush>
+                                    </Border.Background>
+                                    <TextBlock Text="📁"
+                                               Foreground="#c0c1c1"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               FontSize="12"
+                                               FontFamily="Verdana" />
+                                </Border>
+                            </Button>
+
+                            <Button Name="Additionally" Click="Additionally_OnClick"
+                                    Grid.Row="2" Grid.Column="0"
+                                    Background="#1e1e1e"
+                                    HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                    BorderBrush="Black"
+                                    BorderThickness="1"
+                                    Padding="0">
+                                <Border BorderBrush="#303030"
+                                        BorderThickness="1"
+                                        CornerRadius="0"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch">
+                                    <Border.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,25">
+                                            <GradientStop Color="#232323" Offset="0" />
+                                            <GradientStop Color="#191919" Offset="1" />
+                                        </LinearGradientBrush>
+                                    </Border.Background>
+                                    <TextBlock Text="⚙️"
+                                               Foreground="#c0c1c1"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               FontSize="12"
+                                               FontFamily="Verdana" />
+                                </Border>
+                            </Button>
+
+                            <Button Name="Run" Click="Run_OnClick"
+                                    Grid.Row="0" Grid.Column="2"
+                                    IsEnabled="True"
+                                    Background="#1e1e1e"
+                                    HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                    BorderBrush="Black"
+                                    BorderThickness="1"
+                                    Padding="0">
+                                <Border BorderBrush="#303030"
+                                        BorderThickness="1"
+                                        CornerRadius="0"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch">
+                                    <Border.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,25">
+                                            <GradientStop Color="#232323" Offset="0" />
+                                            <GradientStop Color="#191919" Offset="1" />
+                                        </LinearGradientBrush>
+                                    </Border.Background>
+                                    <TextBlock Text="Start"
+                                               Name="RunText"
+                                               Foreground="#c0c1c1"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               FontSize="12"
+                                               FontFamily="Verdana" />
+                                </Border>
+                            </Button>
+
+                            <Button Name="Exit" Click="Exit_OnClick"
+                                    Grid.Row="2" Grid.Column="2"
+                                    Background="#1e1e1e"
+                                    HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                    BorderBrush="Black"
+                                    BorderThickness="1"
+                                    Padding="0">
+                                <Border BorderBrush="#303030"
+                                        BorderThickness="1"
+                                        CornerRadius="0"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch">
+                                    <Border.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,25">
+                                            <GradientStop Color="#232323" Offset="0" />
+                                            <GradientStop Color="#191919" Offset="1" />
+                                        </LinearGradientBrush>
+                                    </Border.Background>
+                                    <TextBlock Text="Exit"
+                                               Foreground="#c0c1c1"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               FontSize="12"
+                                               FontFamily="Verdana" />
+                                </Border>
+                            </Button>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>

@@ -9,7 +9,7 @@ public partial class SecondWindow : Window
     public SecondWindow()
     {
         InitializeComponent();
-        
+
         if (DragImage != null)
         {
             DragImage.PointerPressed += DragImage_PointerPressed;
@@ -27,5 +27,12 @@ public partial class SecondWindow : Window
     private void CloseAdditionally_OnClick(object? sender, RoutedEventArgs e)
     {
         this.Close();
+    }
+
+    private void GitHubLink_OnClick(object? sender, RoutedEventArgs e)
+    {
+        TopLevel.GetTopLevel(this)?
+            .Launcher
+            .LaunchUriAsync(new System.Uri("https://github.com/extrapolate1337/MMM"));
     }
 }
