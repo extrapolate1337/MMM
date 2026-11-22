@@ -2,7 +2,7 @@
 using Avalonia.Controls;
 using System;
 
-namespace aimware;
+namespace MMM;
 
 class Program
 {

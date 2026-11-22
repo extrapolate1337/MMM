@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "aimware", "aimware\aimware.csproj", "{B97F26FB-C2A0-4F6F-883B-569FE4435596}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MMM", "MMM.csproj", "{B97F26FB-C2A0-4F6F-883B-569FE4435596}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

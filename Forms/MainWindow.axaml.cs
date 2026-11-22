@@ -9,9 +9,9 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
-using aimware.Services;
+using MMM.Services;
 
-namespace aimware;
+namespace MMM;
 
 public partial class MainWindow : Window
 {
@@ -21,7 +21,10 @@ public partial class MainWindow : Window
     private readonly GameService _game;
 
     private string _currentAction = "None";
-    private string? GameFloder;
+    private string? _gamePath;
+    private static readonly string GamePathSettingsFile = Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "MMM", "game-path.txt");
+    private SecondWindow? _additionallyWindow;
 
     public MainWindow()
     {
@@ -32,6 +35,7 @@ public partial class MainWindow : Window
 
         InitializeComponent();
         InitializeApp();
+        RestoreGamePath();
         if (DragImage != null) DragImage.PointerPressed += DragImage_PointerPressed;
         if (Design.IsDesignMode)
             return;
@@ -54,7 +58,7 @@ public partial class MainWindow : Window
             {
                 var item = new ListBoxItem
                 {
-                    Content = modpacks[i].Replace("./", ""),
+                    Content = Path.GetFileName(modpacks[i]),
                     FontSize = 10,
                     FontFamily = new FontFamily("Verdana"),
                     Padding = new Thickness(10, 6, 8, 0),
@@ -105,7 +109,7 @@ public partial class MainWindow : Window
             {
                 var item = new ListBoxItem
                 {
-                    Content = modpacks[i].Replace("./", ""),
+                    Content = Path.GetFileName(modpacks[i]),
                     FontSize = 10,
                     FontFamily = new FontFamily("Verdana"),
                     Padding = new Thickness(10, 6, 8, 0),
@@ -137,7 +141,7 @@ public partial class MainWindow : Window
         ListBoxContent.UnselectAll();
         FocusManager?.ClearFocus();
         ListBoxContent.Items.Clear();
-        var names = _mods.GetModNames(_modPacks.AbsDirectory + "modpacks/" + nameModpack);
+        var names = _mods.GetModNames(_modPacks.GetModPackPath(nameModpack));
 
         if (names == null)
         {
@@ -205,19 +209,26 @@ public partial class MainWindow : Window
 
     private async void Run_OnClick(object? sender, RoutedEventArgs e)
     {
+        var gamePath = _gamePath;
+        if (!_game.CanRun(gamePath))
+        {
+            UpdateGamePathControls();
+            await ChooseGamePathAsync();
+            return;
+        }
+
         var selectedModPack = GetSelectedItemNameCollections();
         if (selectedModPack == null) return;
 
-        var gameFloder = GameFloder;
-        if (gameFloder == null || !_game.CanRun(gameFloder)) return;
-        if (!Directory.Exists(_modPacks.AbsDirectory + "modpacks/" + selectedModPack)) return;
+        var modPackPath = _modPacks.GetModPackPath(selectedModPack);
+        if (!Directory.Exists(modPackPath)) return;
 
-        RunText.Text = "🔧 ⏳ 🔧";
+        RunText.Text = "🔧...";
         await Task.Delay(500);
         Run.IsEnabled = false;
         try
         {
-            _game.Run(gameFloder, _modPacks.AbsDirectory, selectedModPack);
+            _game.Run(gamePath, modPackPath);
         }
         finally
         {
@@ -247,7 +258,8 @@ public partial class MainWindow : Window
         var nameModPack = GetSelectedItemNameCollections();
         if (nameModPack == null) return;
 
-        var isEmpty = _modPacks.IsModPackEmpty(_modPacks.AbsDirectory + "modpacks/" + nameModPack);
+        var selectedIndex = ListBox.SelectedIndex;
+        var isEmpty = _modPacks.IsModPackEmpty(_modPacks.GetModPackPath(nameModPack));
         if (!isEmpty && !await ConfirmAction())
             return;
 
@@ -257,7 +269,8 @@ public partial class MainWindow : Window
         _modPacks.DeleteModPack(nameModPack);
         UpdateModpacks();
 
-        Directory.SetCurrentDirectory("..");
+        if (ListBox.ItemCount > 0)
+            ListBox.SelectedIndex = Math.Min(selectedIndex, ListBox.ItemCount - 1);
     }
 
     private async void AddAddon_OnClick(object? sender, RoutedEventArgs e)
@@ -278,7 +291,7 @@ public partial class MainWindow : Window
             if (string.IsNullOrEmpty(archive)) continue;
 
             var nameModPack = selectedModPack ?? Path.GetFileNameWithoutExtension(archive);
-            var destination = _modPacks.AbsDirectory + "modpacks/" + nameModPack;
+            var destination = _modPacks.GetModPackPath(nameModPack);
             Console.WriteLine("Select: Archive " + archive);
             Console.WriteLine("Extract to: " + destination);
 
@@ -344,17 +357,23 @@ public partial class MainWindow : Window
         if (!await ConfirmAction())
             return;
 
-        _mods.DeleteMods(selectedModPack, selectedMods);
+        _mods.DeleteMods(_modPacks.GetModPackPath(selectedModPack), selectedMods);
 
         UpdateModpacks();
         ListBox.SelectedIndex = index;
-        Directory.SetCurrentDirectory("..");
     }
 
     private void Additionally_OnClick(object? sender, RoutedEventArgs e)
     {
-        var additionallyWindow = new SecondWindow();
-        additionallyWindow.Show();
+        if (_additionallyWindow is not null)
+        {
+            _additionallyWindow.Activate();
+            return;
+        }
+
+        _additionallyWindow = new SecondWindow();
+        _additionallyWindow.Closed += (_, _) => _additionallyWindow = null;
+        _additionallyWindow.Show(this);
     }
 
     private void ListBox_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
@@ -388,32 +407,17 @@ public partial class MainWindow : Window
 
     private void ListBoxContent_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
-        if (ListBoxContent.SelectedItem == null)
-        {
-            Copy.IsVisible = false;
-            Move.IsVisible = false;
-            ActiveButton.IsVisible = false;
-            return;
-        }
+        var selectedMods = ListBoxContent.SelectedItems?.OfType<ListBoxItem>().ToArray();
+        var hasSelection = selectedMods is { Length: > 0 };
+        Copy.IsVisible = Move.IsVisible = hasSelection && ListBox.ItemCount != 1;
+        ActiveButton.IsVisible = hasSelection;
+        if (selectedMods is not { Length: > 0 }) return;
 
-
-        var item = ListBoxContent.SelectedItem;
-        if (ListBoxContent.SelectedItem == item)
-        {
-            if (ListBox.ItemCount == 1)
-            {
-                Copy.IsVisible = false;
-                Move.IsVisible = false;
-            }
-            else
-            {
-                Copy.IsVisible = true;
-                Move.IsVisible = true;
-            }
-
-            ActiveButton.IsVisible = true;
-        }
-
+        var disabledCount = selectedMods.Count(item =>
+            item.Content?.ToString()?.StartsWith(ModService.DisabledPrefix, StringComparison.Ordinal) == true);
+        ActiveButtonText.Text = disabledCount == selectedMods.Length ? "Activate"
+            : disabledCount == 0 ? "Disable"
+            : "Toggle";
     }
 
     private void TextBox_OnTextChanged(object? sender, TextChangedEventArgs e)
@@ -481,27 +485,72 @@ public partial class MainWindow : Window
         }
 
         _currentAction = "None";
-        Directory.SetCurrentDirectory("..");
     }
 
-    private async Task<string?> SelectFolderGame(string title)
+    private void RestoreGamePath()
     {
-        var result = await StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+        try
         {
-            Title = title,
+            if (File.Exists(GamePathSettingsFile))
+                _gamePath = File.ReadAllText(GamePathSettingsFile);
+        }
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
+        {
+            Console.Error.WriteLine(exception.Message);
+        }
+
+        UpdateGamePathControls();
+    }
+
+    private void UpdateGamePathControls()
+    {
+        var hasGame = _game.CanRun(_gamePath);
+        Floder.IsVisible = hasGame;
+        Grid.SetColumn(Run, hasGame ? 2 : 0);
+        Grid.SetColumnSpan(Run, hasGame ? 1 : 3);
+        RunText.Text = hasGame ? "Start" : "Set game folder";
+    }
+
+    private async Task ChooseGamePathAsync()
+    {
+        var result = await StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
+        {
+            Title = "Select the Marvel Rivals game folder",
             AllowMultiple = false
         });
 
-        if (result.Count == 0) return null;
-        var path = result[0].Path.LocalPath;
-        return string.IsNullOrEmpty(path) ? null : path;
+        if (result.Count == 0 || result[0].TryGetLocalPath() is not { } folder) return;
+
+        var candidates = new[]
+        {
+            Path.Combine(folder, "Marvel.exe"),
+            Path.Combine(folder, "MarvelGame", "Marvel.exe")
+        };
+        var gamePath = candidates.FirstOrDefault(_game.CanRun);
+        if (gamePath == null)
+        {
+            RunText.Text = _game.CanRun(_gamePath) ? "Start" : "Invalid game folder";
+            return;
+        }
+
+        _gamePath = gamePath;
+        UpdateGamePathControls();
+
+        try
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(GamePathSettingsFile)!);
+            File.WriteAllText(GamePathSettingsFile, gamePath);
+        }
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
+        {
+            Console.Error.WriteLine(exception.Message);
+            RunText.Text = "Path not saved";
+        }
     }
 
     private async void Floder_OnClick(object? sender, RoutedEventArgs e)
     {
-        var currentFloder = await SelectFolderGame("Select: Marvel.exe");
-        GameFloder = currentFloder;
-        Console.WriteLine("Target PATH: " + currentFloder);
+        await ChooseGamePathAsync();
     }
 
     private void CopyMode_OnClick(object? sender, RoutedEventArgs e)
@@ -515,7 +564,7 @@ public partial class MainWindow : Window
             for (var i = 0; i < dirs.Length; i++)
                 ListBoxMenager.Items.Add(new ListBoxItem
                 {
-                    Content = dirs[i].Replace("./", ""),
+                    Content = Path.GetFileName(dirs[i]),
                     FontFamily = new FontFamily("Verdana"),
                     FontSize = 12
                 });
@@ -526,8 +575,6 @@ public partial class MainWindow : Window
         _currentAction = "Copy";
         if (_currentAction == "Copy")
             CopyText.Foreground = new SolidColorBrush(Color.Parse("#7bc330"));
-
-        Directory.SetCurrentDirectory("..");
     }
 
     private void Move_OnClick(object? sender, RoutedEventArgs e)
@@ -541,7 +588,7 @@ public partial class MainWindow : Window
             for (var i = 0; i < dirs.Length; i++)
                 ListBoxMenager.Items.Add(new ListBoxItem
                 {
-                    Content = dirs[i].Replace("./", ""),
+                    Content = Path.GetFileName(dirs[i]),
                     FontFamily = new FontFamily("Verdana"),
                     FontSize = 12
                 });
@@ -552,8 +599,6 @@ public partial class MainWindow : Window
         _currentAction = "Move";
         if (_currentAction == "Move")
             MoveText.Foreground = new SolidColorBrush(Color.Parse("#7bc330"));
-
-        Directory.SetCurrentDirectory("..");
     }
 
     private void ActiveButton_OnClick(object? sender, RoutedEventArgs e)
@@ -563,12 +608,11 @@ public partial class MainWindow : Window
         if (selectedMods == null || selectedModPack == null) return;
         if (!_modPacks.EnsureModPacksDirectory()) return;
 
-        _mods.ToggleMods(selectedModPack, selectedMods);
+        _mods.ToggleMods(_modPacks.GetModPackPath(selectedModPack), selectedMods);
 
         var index = ListBox.SelectedIndex;
         UpdateModpacks();
         ListBox.SelectedIndex = index;
-        Directory.SetCurrentDirectory("..");
     }
 
     private async void ListBoxMenager_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
@@ -581,15 +625,9 @@ public partial class MainWindow : Window
             return;
         }
 
-        var itemName = "";
         var modeName = new List<string>();
-        var selectedItemObject = ListBoxMenager.SelectedItem;
-        var listBoxItem = selectedItemObject as ListBoxItem;
-        if (listBoxItem != null)
-        {
-            //Console.WriteLine("Manager: " + listBoxItem.Content);
-            itemName = "./" + (listBoxItem.Content?.ToString() ?? string.Empty);
-        }
+        var listBoxItem = ListBoxMenager.SelectedItem as ListBoxItem;
+        var targetModPack = listBoxItem?.Content?.ToString();
 
         var selectedMode = ListBoxContent.SelectedItems;
         if (selectedMode == null) return;
@@ -597,33 +635,24 @@ public partial class MainWindow : Window
         {
             var listBoxModeItem = item as ListBoxItem;
             if (listBoxModeItem != null)
-            {
-                //Console.WriteLine("selected item: " + listBoxModeItem.Content);
                 modeName.Add(listBoxModeItem.Content?.ToString() ?? string.Empty);
-            }
         }
 
         if (!_modPacks.EnsureModPacksDirectory()) return;
 
-        var modPackDirs = Directory.GetDirectories("./");
-        if (modPackDirs.Length > 0 && listBoxItem != null)
+        if (targetModPack != null)
         {
-            if (!modPackDirs.Contains(itemName))
-            {
-                Directory.SetCurrentDirectory("..");
-                return;
-            }
+            var targetModPackPath = _modPacks.GetModPackPath(targetModPack);
+            if (!Directory.Exists(targetModPackPath)) return;
 
-            if (!await ConfirmAction())
-            {
-                Directory.SetCurrentDirectory("..");
-                return;
-            }
+            if (!await ConfirmAction()) return;
 
             var selectedModPack = GetSelectedItemNameCollections();
-            var targetModPack = listBoxItem.Content?.ToString();
-            if (selectedModPack != null && targetModPack != null)
-                _mods.CopyOrMoveMods(selectedModPack, targetModPack, modeName,
+            if (selectedModPack != null)
+                _mods.CopyOrMoveMods(
+                    _modPacks.GetModPackPath(selectedModPack),
+                    targetModPackPath,
+                    modeName,
                     _currentAction == "Copy");
         }
 
@@ -637,7 +666,5 @@ public partial class MainWindow : Window
         var index = ListBox.SelectedIndex;
         UpdateModpacks();
         ListBox.SelectedIndex = index;
-
-        Directory.SetCurrentDirectory("..");
     }
 }

@@ -3,10 +3,10 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="aimware.MainWindow"
+        x:Class="MMM.MainWindow"
         SystemDecorations="None"
         Title="MMM" Background="#232323" Width="800" Height="450" 
-        Icon="avares://aimware/Resources/icon/mmm-icon.png"
+        Icon="avares://MMM/Resources/icon/mmm-icon.png"
         MinHeight="450" MinWidth="800">
     <Window.Styles>
         <Style Selector="ListBoxItem">
@@ -34,7 +34,7 @@
                     Stroke="#373737"
                     StrokeThickness="1">
                     <Rectangle.Fill>
-                        <ImageBrush Source="avares://aimware/Resources/images/pattern.png"
+                        <ImageBrush Source="avares://MMM/Resources/images/pattern.png"
                                     TileMode="Tile"
                                     Stretch="None"
                                     DestinationRect="0,0,100,100" />
@@ -133,7 +133,7 @@
                                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                     Background="#1e1e1e" Foreground="#c0c1c1"
                                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                                    SelectionMode="Single"
+                                    SelectionMode="Multiple"
                                     BorderBrush="#303030"
                                     BorderThickness="1">
                                     <ListBox.Styles>
@@ -281,7 +281,7 @@
                                                 <GradientStop Color="#191919" Offset="1" />
                                             </LinearGradientBrush>
                                         </Border.Background>
-                                        <TextBlock Text="Disable"
+                                        <TextBlock Name="ActiveButtonText" Text="Disable"
                                                 Foreground="#c0c1c1"
                                                 HorizontalAlignment="Center"
                                                 VerticalAlignment="Center"

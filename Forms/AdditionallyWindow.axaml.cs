@@ -2,7 +2,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 
-namespace aimware;
+namespace MMM;
 
 public partial class SecondWindow : Window
 {

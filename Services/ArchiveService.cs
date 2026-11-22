@@ -2,7 +2,7 @@ using System.IO;
 using SharpCompress.Archives;
 using SharpCompress.Common;
 
-namespace aimware.Services;
+namespace MMM.Services;
 
 public class ArchiveService
 {
