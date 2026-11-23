@@ -38,7 +38,7 @@ A clean modpack and `.pak` mod manager for Marvel Rivals. Build collections, ena
 1. **Launch `MMM.exe`**
 2. Click **+** next to **ModPacks** to create a modpack.
 3. Click **+** next to **Addons Manager** and select your mod archives.
-4. Click **Set game folder** and select the Marvel Rivals game folder
+4. Click **Select Marvel.exe** and choose the game executable
 5. Select a modpack and press **Start** — the game launches with its active mods.
 
 > 💡 Close the game before launching. MMM clears the `~mods` folder and copies only enabled mods into it.
@@ -48,7 +48,8 @@ A clean modpack and `.pak` mod manager for Marvel Rivals. Build collections, ena
 ## 🧠 How it works
 
 ```
-MMM/
+MMMData/
+├── settings.txt               ← saved path to Marvel.exe
 └── modpacks/
     ├── Anime Pack/
     │   ├── skin_001_P.pak
@@ -59,7 +60,7 @@ MMM/
 
 When you press **Start**, the app:
 
-1. Validates the selected game folder and the `Marvel/Binaries/Win64` structure.
+1. Validates the selected `Marvel.exe` and the `Marvel/Binaries/Win64` structure.
 2. Installs `dsound.dll` and the bypass plugin.
 3. Clears `Marvel/Content/Paks/~mods`.
 4. Copies every `.pak` file from the selected modpack except disabled ones.
@@ -142,7 +143,7 @@ MMM/
 └── MMM.sln
 ```
 
-The `MMM/modpacks/` folder is created automatically on first launch and is excluded from Git.
+The `MMMData/` folder is created automatically next to `MMM.exe` on first launch. It stores modpacks and `settings.txt`, and is excluded from Git.
 
 ---
 

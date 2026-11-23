@@ -22,8 +22,7 @@ public partial class MainWindow : Window
 
     private string _currentAction = "None";
     private string? _gamePath;
-    private static readonly string GamePathSettingsFile = Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "MMM", "game-path.txt");
+    private string SettingsFile => Path.Combine(_modPacks.AbsDirectory, "settings.txt");
     private SecondWindow? _additionallyWindow;
 
     public MainWindow()
@@ -36,6 +35,10 @@ public partial class MainWindow : Window
         InitializeComponent();
         InitializeApp();
         RestoreGamePath();
+        Activated += (_, _) =>
+        {
+            if (Run.IsEnabled) UpdateGamePathControls();
+        };
         if (DragImage != null) DragImage.PointerPressed += DragImage_PointerPressed;
         if (Design.IsDesignMode)
             return;
@@ -224,15 +227,15 @@ public partial class MainWindow : Window
         if (!Directory.Exists(modPackPath)) return;
 
         RunText.Text = "🔧...";
-        await Task.Delay(500);
         Run.IsEnabled = false;
         try
         {
             _game.Run(gamePath, modPackPath);
+            await Task.Delay(500);
         }
         finally
         {
-            RunText.Text = "Start";
+            UpdateGamePathControls();
             Run.IsEnabled = true;
         }
     }
@@ -491,8 +494,8 @@ public partial class MainWindow : Window
     {
         try
         {
-            if (File.Exists(GamePathSettingsFile))
-                _gamePath = File.ReadAllText(GamePathSettingsFile);
+            if (File.Exists(SettingsFile))
+                _gamePath = File.ReadAllText(SettingsFile);
         }
         catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
         {
@@ -505,31 +508,32 @@ public partial class MainWindow : Window
     private void UpdateGamePathControls()
     {
         var hasGame = _game.CanRun(_gamePath);
-        Floder.IsVisible = hasGame;
+        ChangeGameExecutable.IsVisible = hasGame;
         Grid.SetColumn(Run, hasGame ? 2 : 0);
         Grid.SetColumnSpan(Run, hasGame ? 1 : 3);
-        RunText.Text = hasGame ? "Start" : "Set game folder";
+        RunText.Text = hasGame ? "Start" : "Select Marvel.exe";
     }
 
     private async Task ChooseGamePathAsync()
     {
-        var result = await StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
+        var result = await StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
         {
-            Title = "Select the Marvel Rivals game folder",
-            AllowMultiple = false
+            Title = "Select Marvel.exe",
+            AllowMultiple = false,
+            FileTypeFilter = new[]
+            {
+                new FilePickerFileType("Marvel Rivals (Marvel.exe)")
+                {
+                    Patterns = new[] { "Marvel.exe" }
+                }
+            }
         });
 
-        if (result.Count == 0 || result[0].TryGetLocalPath() is not { } folder) return;
+        if (result.Count == 0 || result[0].TryGetLocalPath() is not { } gamePath) return;
 
-        var candidates = new[]
+        if (!_game.CanRun(gamePath))
         {
-            Path.Combine(folder, "Marvel.exe"),
-            Path.Combine(folder, "MarvelGame", "Marvel.exe")
-        };
-        var gamePath = candidates.FirstOrDefault(_game.CanRun);
-        if (gamePath == null)
-        {
-            RunText.Text = _game.CanRun(_gamePath) ? "Start" : "Invalid game folder";
+            RunText.Text = _game.CanRun(_gamePath) ? "Start" : "Invalid Marvel.exe";
             return;
         }
 
@@ -538,8 +542,7 @@ public partial class MainWindow : Window
 
         try
         {
-            Directory.CreateDirectory(Path.GetDirectoryName(GamePathSettingsFile)!);
-            File.WriteAllText(GamePathSettingsFile, gamePath);
+            File.WriteAllText(SettingsFile, gamePath);
         }
         catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
         {
@@ -548,7 +551,7 @@ public partial class MainWindow : Window
         }
     }
 
-    private async void Floder_OnClick(object? sender, RoutedEventArgs e)
+    private async void ChangeGameExecutable_OnClick(object? sender, RoutedEventArgs e)
     {
         await ChooseGamePathAsync();
     }

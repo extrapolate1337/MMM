@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -7,57 +6,26 @@ namespace MMM.Services;
 
 public class ModPackService
 {
+    public const string DataFolderName = "MMMData";
+
     public string AbsDirectory { get; private set; } = string.Empty;
 
     public string ModPacksDirectory => Path.Combine(AbsDirectory, "modpacks");
 
-    public string LastDirectory { get; private set; } = string.Empty;
-
     public string[] Initialize()
     {
-        var startDirectory = Path.GetFullPath(".");
-        LastDirectory = new DirectoryInfo(startDirectory).Name;
-        AbsDirectory = IsDeploymentDirectory(startDirectory)
-            ? startDirectory
-            : Path.Combine(startDirectory, "MMM");
+        AbsDirectory = Path.Combine(AppContext.BaseDirectory, DataFolderName);
 
+        Directory.CreateDirectory(AbsDirectory);
         Directory.CreateDirectory(ModPacksDirectory);
-        Directory.SetCurrentDirectory(AbsDirectory);
 
         return Directory.GetDirectories(ModPacksDirectory);
     }
 
-    public bool IsMainPath()
-    {
-        return PathsEqual(Directory.GetCurrentDirectory(), AbsDirectory);
-    }
-
-    public bool EnsureBaseDirectory()
-    {
-        try
-        {
-            Directory.SetCurrentDirectory(AbsDirectory);
-            return true;
-        }
-        catch (Exception exception)
-        {
-            Console.WriteLine(exception);
-            return false;
-        }
-    }
-
     public bool EnsureModPacksDirectory()
     {
-        try
-        {
-            Directory.CreateDirectory(ModPacksDirectory);
-            return true;
-        }
-        catch (Exception exception)
-        {
-            Console.WriteLine(exception);
-            return false;
-        }
+        Directory.CreateDirectory(ModPacksDirectory);
+        return true;
     }
 
     public string GetModPackPath(string name)
@@ -67,8 +35,6 @@ public class ModPackService
 
     public string[] GetModPacks()
     {
-        if (!Directory.Exists(ModPacksDirectory)) return [];
-
         return Directory.GetDirectories(ModPacksDirectory);
     }
 
@@ -131,16 +97,6 @@ public class ModPackService
 
         Directory.Move(oldPath, newPath);
         return true;
-    }
-
-    private static bool IsDeploymentDirectory(string path)
-    {
-        if (!string.Equals(new DirectoryInfo(path).Name, "MMM", StringComparison.OrdinalIgnoreCase))
-            return false;
-
-        return File.Exists(Path.Combine(path, "MMM.exe"))
-               || File.Exists(Path.Combine(path, "MMM"))
-               || File.Exists(Path.Combine(path, "MMM.dll"));
     }
 
     private static bool PathsEqual(string first, string second)

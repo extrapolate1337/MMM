@@ -526,7 +526,10 @@
                         </Grid>
 
                         <Grid Margin="22 20 23 15" ColumnDefinitions="30,5,100" RowDefinitions="30,5,30">
-                            <Button Name="Floder" Click="Floder_OnClick"
+                            <Button Name="ChangeGameExecutable" Click="ChangeGameExecutable_OnClick"
+                                    ToolTip.Tip="Change Marvel.exe"
+                                    AutomationProperties.Name="Change Marvel.exe"
+                                    IsVisible="False"
                                     Grid.Row="0" Grid.Column="0"
                                     Background="#1e1e1e"
                                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
@@ -544,7 +547,7 @@
                                             <GradientStop Color="#191919" Offset="1" />
                                         </LinearGradientBrush>
                                     </Border.Background>
-                                    <TextBlock Text="📁"
+                                    <TextBlock Text="📂"
                                                Foreground="#c0c1c1"
                                                HorizontalAlignment="Center"
                                                VerticalAlignment="Center"
@@ -581,7 +584,7 @@
                             </Button>
 
                             <Button Name="Run" Click="Run_OnClick"
-                                    Grid.Row="0" Grid.Column="2"
+                                    Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3"
                                     IsEnabled="True"
                                     Background="#1e1e1e"
                                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
@@ -599,7 +602,7 @@
                                             <GradientStop Color="#191919" Offset="1" />
                                         </LinearGradientBrush>
                                     </Border.Background>
-                                    <TextBlock Text="Start"
+                                    <TextBlock Text="Select Marvel.exe"
                                                Name="RunText"
                                                Foreground="#c0c1c1"
                                                HorizontalAlignment="Center"

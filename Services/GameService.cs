@@ -68,30 +68,18 @@ public class GameService
         if (!string.Equals(Path.GetFileName(executablePath), ExecutableName, StringComparison.OrdinalIgnoreCase))
             return false;
 
-        var executableDirectory = Path.GetDirectoryName(executablePath);
-        if (executableDirectory == null) return false;
-
-        //windows
-        var marvelDirectory = new DirectoryInfo(executableDirectory).Parent?.Parent;
-        if (marvelDirectory != null
-            && string.Equals(marvelDirectory.Name, "Marvel", StringComparison.OrdinalIgnoreCase))
+        var directory = Path.GetDirectoryName(executablePath);
+        while (!string.IsNullOrEmpty(directory))
         {
-            var candidateRoot = marvelDirectory.Parent?.FullName;
-            if (candidateRoot != null && HasGameLayout(candidateRoot, executableDirectory))
+            var candidateBinDirectory = Path.Combine(directory, "Marvel", "Binaries", "Win64");
+            if (HasGameLayout(directory, candidateBinDirectory))
             {
-                gameRoot = candidateRoot;
-                binDirectory = executableDirectory;
+                gameRoot = directory;
+                binDirectory = candidateBinDirectory;
                 return true;
             }
-        }
 
-        //linux
-        var candidateBinDirectory = Path.Combine(executableDirectory, "Marvel", "Binaries", "Win64");
-        if (HasGameLayout(executableDirectory, candidateBinDirectory))
-        {
-            gameRoot = executableDirectory;
-            binDirectory = candidateBinDirectory;
-            return true;
+            directory = Path.GetDirectoryName(directory);
         }
 
         return false;
