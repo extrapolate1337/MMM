@@ -47,8 +47,6 @@ A clean modpack and `.pak` mod manager for Marvel Rivals. Build collections, ena
 
 ## 🧠 How it works
 
-```
-MMMData/
 ├── settings.txt               ← saved path to Marvel.exe
 └── modpacks/
     ├── Anime Pack/
@@ -108,7 +106,7 @@ dotnet restore
 dotnet run --project MMM.csproj
 ```
 
-Single-file release build:
+Release build:
 
 ```bash
 dotnet publish MMM.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true
